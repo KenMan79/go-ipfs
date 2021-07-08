@@ -792,18 +792,4 @@ tests_for_files_api "offline"
 
 test_kill_ipfs_daemon --offline
 
-test_expect_success "enable sharding in config" '
-  ipfs config --json Experimental.ShardingEnabled true
-'
-
-test_launch_ipfs_daemon --offline
-
-SHARD_HASH=QmPkwLJTYZRGPJ8Lazr9qPdrLmswPtUjaDbEpmR9jEh1se
-test_sharding "(cidv0)"
-
-SHARD_HASH=bafybeib46tpawg2d2hhlmmn2jvgio33wqkhlehxrem7wbfvqqikure37rm
-test_sharding "(cidv1 root)" "--cid-version=1"
-
-test_kill_ipfs_daemon
-
 test_done
