@@ -511,7 +511,7 @@ test_files_api() {
 
   # Offending test: https://github.com/ipfs/go-ipfs/issues/8131
   test_expect_success "root hash not bubbled up yet $EXTRA" '
-    test -z "$ONLINE" ||
+    test -z "$WITH_DAEMON" ||
     (ipfs refs local > refsout &&
     test_expect_code 1 grep $ROOT_HASH refsout)
   '
@@ -728,13 +728,13 @@ tests_for_files_api() {
 
 }
 
-tests_for_files_api "online"
+tests_for_files_api "no-daemon"
 
 test_launch_ipfs_daemon --offline
 
-ONLINE=1 # set online flag so tests can easily tell
+WITH_DAEMON=1 # set online flag so tests can easily tell
 
-tests_for_files_api "offline"
+tests_for_files_api "with-daemon"
 
 test_kill_ipfs_daemon --offline
 
