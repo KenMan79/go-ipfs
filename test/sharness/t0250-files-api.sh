@@ -726,60 +726,6 @@ tests_for_files_api() {
   TRUNC_HASH=QmPVnT9gocPbqzN4G6SMp8vAPyzcjDbUJrNdKgzQquuDg4
   test_files_api "($EXTRA)"
 
-  test_expect_success "can create some files for testing with raw-leaves ($EXTRA)" '
-    create_files --raw-leaves
-  '
-
-  if [ "$EXTRA" = "offline" ]; then
-    ROOT_HASH=QmTpKiKcAj4sbeesN6vrs5w3QeVmd4QmGpxRL81hHut4dZ
-    CATS_HASH=QmPhPkmtUGGi8ySPHoPu1qbfryLJKKq1GYxpgLyyCruvGe
-    test_files_api "($EXTRA, partial raw-leaves)"
-  fi
-
-  ROOT_HASH=QmW3dMSU6VNd1mEdpk9S3ZYRuR1YwwoXjGaZhkyK6ru9YU
-  CATS_HASH=QmPqWDEg7NoWRX8Y4vvYjZtmdg5umbfsTQ9zwNr12JoLmt
-  FILE_HASH=QmRCgHeoKxCqK2Es6M6nPUDVWz19yNQPnsXGsXeuTkSKpN
-  TRUNC_HASH=QmckstrVxJuecVD1FHUiURJiU9aPURZWJieeBVHJPACj8L
-  test_files_api "($EXTRA, raw-leaves)" '' --raw-leaves
-
-  ROOT_HASH=QmageRWxC7wWjPv5p36NeAgBAiFdBHaNfxAehBSwzNech2
-  CATS_HASH=bafybeig4cpvfu2qwwo3u4ffazhqdhyynfhnxqkzvbhrdbamauthf5mfpuq
-  FILE_HASH=bafybeibkrazpbejqh3qun7xfnsl7yofl74o4jwhxebpmtrcpavebokuqtm
-  TRUNC_HASH=bafybeigwhb3q36yrm37jv5fo2ap6r6eyohckqrxmlejrenex4xlnuxiy3e
-  if [ "$EXTRA" = "offline" ]; then
-    test_files_api "($EXTRA, cidv1)" --cid-version=1
-  fi
-
-  test_expect_success "can update root hash to cidv1" '
-    ipfs files chcid --cid-version=1 / &&
-    echo bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354 > hash_expect &&
-    ipfs files stat --hash / > hash_actual &&
-    test_cmp hash_expect hash_actual
-  '
-
-  ROOT_HASH=bafybeifxnoetaa2jetwmxubv3gqiyaknnujwkkkhdeua63kulm63dcr5wu
-    test_files_api "($EXTRA, cidv1 root)"
-
-  if [ "$EXTRA" = "offline" ]; then
-    test_expect_success "can update root hash to blake2b-256" '
-    ipfs files chcid --hash=blake2b-256 / &&
-      echo bafykbzacebugfutjir6qie7apo5shpry32ruwfi762uytd5g3u2gk7tpscndq > hash_expect &&
-      ipfs files stat --hash / > hash_actual &&
-      test_cmp hash_expect hash_actual
-    '
-    ROOT_HASH=bafykbzaceb6jv27itwfun6wsrbaxahpqthh5be2bllsjtb3qpmly3vji4mlfk
-    CATS_HASH=bafykbzacebhpn7rtcjjc5oa4zgzivhs7a6e2tq4uk4px42bubnmhpndhqtjig
-    FILE_HASH=bafykbzaceca45w2i3o3q3ctqsezdv5koakz7sxsw37ygqjg4w54m2bshzevxy
-    TRUNC_HASH=bafykbzaceadeu7onzmlq7v33ytjpmo37rsqk2q6mzeqf5at55j32zxbcdbwig
-    test_files_api "($EXTRA, blake2b-256 root)"
-  fi
-
-  test_expect_success "can update root hash back to cidv0" '
-    ipfs files chcid / --cid-version=0 &&
-    echo QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn > hash_expect &&
-    ipfs files stat --hash / > hash_actual &&
-    test_cmp hash_expect hash_actual
-  '
 }
 
 tests_for_files_api "online"
