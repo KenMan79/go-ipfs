@@ -774,7 +774,9 @@ tests_for_files_api "no-daemon"
 
 test_launch_ipfs_daemon_without_network
 
-WITH_DAEMON=1 # set online flag so tests can easily tell
+WITH_DAEMON=1
+# FIXME: Used only on a specific test inside `test_files_api` but we should instead
+# propagate the `"with-daemon"` argument in its caller `tests_for_files_api`.
 
 tests_for_files_api "with-daemon"
 
