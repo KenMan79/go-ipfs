@@ -106,11 +106,20 @@ test_sharding() {
   '
 }
 
+# Some loose notes:
+# Using `/cats` as the root directory where tests work.
 test_files_api() {
   local EXTRA ARGS RAW_LEAVES
+  # Textual information used in output log.
   EXTRA=$1
+  # Used in `ipfs files write` and `ipfs files mkdir`:
+  # * `--cid-version=1`
   ARGS=$2
+  # `--raw-leaves` option for `ipfs files write`.
   RAW_LEAVES=$3
+
+  # Create and verify the directory `/cats` where the tests will be
+  # working on.
 
   test_expect_success "can mkdir in root $EXTRA" '
     ipfs files mkdir $ARGS /cats
@@ -181,6 +190,8 @@ test_files_api() {
     ipfs files stat --hash / > roothashafter &&
     test_cmp roothash roothashafter
   '
+  # Create files ($FILE1/2/3) inside the `/cats` directory and
+  # also inside subdirectories.
 
   test_expect_success "can put files into directory $EXTRA" '
     ipfs files cp /ipfs/$FILE1 /cats/file1
@@ -498,12 +509,19 @@ test_files_api() {
     echo "testing" | ipfs files write $ARGS $RAW_LEAVES -f=false -e /cats/walrus
   '
 
+  # Offending test: https://github.com/ipfs/go-ipfs/issues/8131
   test_expect_success "root hash not bubbled up yet $EXTRA" '
     test -z "$ONLINE" ||
     (ipfs refs local > refsout &&
     test_expect_code 1 grep $ROOT_HASH refsout)
   '
 
+  # FIXME: Does this mean the stat is supposed to flush this?
+  # The stat code seems to be an ad-hoc tool that works on the UnixFS
+  # layer and not on the MFS one that handles flushing.
+  # Maybe the MFS lookup function that ends up calling
+  # `(*mfs.Directory).GetNode()` and then `(*Directory).sync()`.
+  # This is not exactly the same as `(*Directory).Flush()`.
   test_expect_success "changes bubbled up to root on inspection $EXTRA" '
     ipfs files stat --hash / > root_hash
   '
